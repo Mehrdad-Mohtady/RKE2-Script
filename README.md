@@ -49,7 +49,7 @@ Perfect for secure, regulated, or bandwidth-constrained deployments.
 # 1. Download or create the script
 curl -sfL -o prepare_rke2_airgap.sh https://raw.githubusercontent.com/yourusername/yourrepo/main/prepare_rke2_airgap.sh
 # OR
-nano prepare_rke2_airgap.sh  # Then paste the full script content
+vim prepare_rke2_airgap.sh  # Then paste the full script content
 
 # 2. Make it executable
 chmod +x prepare_rke2_airgap.sh
