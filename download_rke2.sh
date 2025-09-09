@@ -1,14 +1,32 @@
 #!/usr/bin/env bash
 
-echo "=== Stage 1: Installing System Dependencies ==="
-apt update -y
-apt install -y curl vim sudo iptables
+echo "=== Stage 0: Checking for required system packages ==="
+REQUIRED_PKGS=("curl" "vim" "sudo" "iptables")
+MISSING_PKGS=()
 
-if [ $? -ne 0 ]; then
-    echo "✗ Failed to install system packages. Are you running as root?"
-    exit 1
+for pkg in "${REQUIRED_PKGS[@]}"; do
+    if ! command -v "$pkg" &> /dev/null; then
+        echo "⚠ $pkg is not installed"
+        MISSING_PKGS+=("$pkg")
+    else
+        echo "✓ $pkg is already installed"
+    fi
+done
+
+if [ ${#MISSING_PKGS[@]} -gt 0 ]; then
+    echo ""
+    echo "=== Stage 1: Installing missing system dependencies ==="
+    apt update -y
+    apt install -y "${MISSING_PKGS[@]}"
+    
+    if [ $? -ne 0 ]; then
+        echo "✗ Failed to install system packages. Are you running as root?"
+        exit 1
+    fi
+    echo "✓ All required packages installed: ${MISSING_PKGS[*]}"
+else
+    echo "✓ All required packages already installed"
 fi
-echo "✓ System dependencies installed"
 echo ""
 
 # ====================================================================
@@ -137,7 +155,7 @@ echo ""
 
 # Final summary
 echo "=== Summary ==="
-echo "System packages: curl, vim, sudo, iptables → Installed"
+echo "System packages: curl, vim, sudo, iptables → Verified/Installed"
 echo ""
 echo "📁 /var/lib/rancher/rke2/agent/images/"
 echo "   • rke2-images-core.linux-amd64.tar.zst"
